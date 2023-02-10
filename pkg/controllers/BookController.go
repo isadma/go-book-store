@@ -52,13 +52,16 @@ func Update(response http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		fmt.Println("Error while parsing ID on update")
 	}
+	book, db := models.Show(Id)
 
 	model := &models.Book{}
 	utils.ParseBody(request, model)
-	book := model.Create()
 
-	models.Delete(Id)
+	book.Name = model.Name
+	book.Author = model.Author
+	book.Publication = model.Publication
 
+	db.Save(&book)
 	res, _ := json.Marshal(book)
 	response.Header().Set("Content-Type", "application/json")
 	response.WriteHeader(http.StatusOK)
